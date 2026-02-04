@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <style>
+        #quiz-container {
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+            border: 2px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: sans-serif;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .correct {
+            background: #9aeabc;
+        }
+
+        .incorrect {
+            background: #ffb3b3;
+        }
+
+        .nxt-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="quiz-container">
+        <h2 id="question">Question Text</h2>
+        <div id="answers"></div>
+        <button class="nxt-btn" id="nxt-btn">Next</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Which language most used in Machine Learning?",
+                answers: [
+                    { text: "Java", correct: false },
+                    { text: "Python", correct: true },
+                    { text: "JavaScript", correct: false },
+                    { text: "MySQL", correct: false }
+                ]
+            },
+            {
+                question: "Which method converts JSON data into a JavaScript object?",
+                answers: [
+                    { text: "JSON.stringify", correct: false },
+                    { text: "JSON.parse", correct: true },
+                    { text: "JSON.convert", correct: false },
+                    { text: "JSON.objectify", correct: false }
+                ]
+            },
+            {
+                question: "Which method converts a JavaScript object into JSON string?",
+                answers: [
+                    { text: "JSON.parse", correct: false },
+                    { text: "JSON.stringify", correct: true },
+                    { text: "JSON.convert", correct: false },
+                    { text: "JSON.toJSON", correct: false }
+                ]
+            },
+            {
+                question: "Which keyword is used to declare a constant in JavaScript?",
+                answers: [
+                    { text: "var", correct: false },
+                    { text: "let", correct: false },
+                    { text: "const", correct: true },
+                    { text: "static", correct: false }
+                ]
+            },
+            {
+                question: "Which function is used to print output in the browser console?",
+                answers: [
+                    { text: "print()", correct: false },
+                    { text: "log()", correct: false },
+                    { text: "console.log()", correct: true },
+                    { text: "document.write()", correct: false }
+                ]
+            },
+            {
+                question: "Which symbol is used for single-line comments in JavaScript?",
+                answers: [
+                    { text: "/* */", correct: false },
+                    { text: "<!-- -->", correct: false },
+                    { text: "//", correct: true },
+                    { text: "#", correct: false }
+                ]
+            }
+        ];
+
+        const questionElement = document.getElementById("question");
+        const answersButtons = document.getElementById("answers");
+        const nextButton = document.getElementById("nxt-btn");
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            nextButton.textContent = "Next";
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            let currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+
+            currentQuestion.answers.forEach(ans => {
+                const button = document.createElement("button");
+                button.textContent = ans.text;
+                button.classList.add("btn");
+                answersButtons.appendChild(button);
+
+                if (ans.correct) {
+                    button.dataset.correct = "true";
+                }
+
+                button.addEventListener("click", selectAnswer);
+            });
+        }
+
+        function selectAnswer(e) {
+            const selectedBtn = e.target;
+            const isCorrect = selectedBtn.dataset.correct === "true";
+
+            if (isCorrect) {
+                score++;
+                selectedBtn.classList.add("correct");
+            } else {
+                selectedBtn.classList.add("incorrect");
+            }
+
+            Array.from(answersButtons.children).forEach(btn => {
+                btn.disabled = true;
+                if (btn.dataset.correct === "true") {
+                    btn.classList.add("correct");
+                }
+            });
+
+            nextButton.style.display = "block";
+        }
+
+        function resetState() {
+            nextButton.style.display = "none";
+            while (answersButtons.firstChild) {
+                answersButtons.removeChild(answersButtons.firstChild);
+            }
+        }
+
+        function showScore() {
+            resetState();
+            questionElement.textContent = `You scored ${score} out of ${questions.length}`;
+            nextButton.textContent = "Play Again 🎮";
+            nextButton.style.display = "block";
+        }
+
+        nextButton.addEventListener("click", () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showScore();
+            }
+        });
+
+        startQuiz();
+    </script>
+
+</body>
+</html>
